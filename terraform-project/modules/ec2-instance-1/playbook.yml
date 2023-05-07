@@ -1,0 +1,46 @@
+- name: Install Apache Tomcat
+  hosts: all
+  become: true
+  tasks:
+  - name: Install Java
+    apt:
+      name: openjdk-8-jdk
+      state: present
+
+  - name: Download and extract Apache Tomcat
+    get_url:
+      url: https://downloads.apache.org/tomcat/tomcat-9/v9.0.53/bin/apache-tomcat-9.0.53.tar.gz
+      dest: /tmp/apache-tomcat.tar.gz
+      mode: '0644'
+
+  - name: Create Tomcat directory
+    file:
+      path: /opt/tomcat
+      state: directory
+      mode: '0755'
+
+  - name: Extract Tomcat archive
+    unarchive:
+      src: /tmp/apache-tomcat.tar.gz
+      dest: /opt/tomcat
+      remote_src: yes
+      owner: root
+      group: root
+      mode: '0755'
+
+  - name: Start Tomcat service
+    systemd:
+      name: tomcat
+      state: started
+      enabled: yes
+
+- name: Install Node.js and npm
+  hosts: all
+  become: true
+  tasks:
+  - name: Install Node.js and npm
+    apt:
+      name:
+      - nodejs
+      - npm
+      state: present
